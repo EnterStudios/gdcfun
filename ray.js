@@ -9,7 +9,7 @@ ray = function() {
 
     // main function to fetch data
     this.get = async(cmd,callback)=>{
-        // callback is abandoned
+        // callback is temporarily abandoned
         callback = callback || 'recordStatus'
         // default cmd is status
         cmd = cmd || 'status'
@@ -97,7 +97,7 @@ ray = function() {
         return this.get(fullurl)
     }
 
-    //get a case with uuid
+    // get a case with uuid
     this.getCase = (cmd,uuid,pretty,expand)=>{
         if (uuid == undefined) {
             console.log('failure: missing uuid')
@@ -184,7 +184,6 @@ ray = function() {
         } catch (e) {}
         return false;
     }
-    ;
 
     // escape the newline symbol in string
     this.escape = (str)=>{
@@ -247,11 +246,29 @@ ray = function() {
             console.log('method found: _mapping')
             return await this.get_mapping(obj)
             break
+        case 'data':
+            console.log('method found: download data')
+            return await this.download(obj)
+            break
         default:
             console.log('invalid method, return status instead')
             return await this.getStatus(obj)
         }
 
+    }
+
+    // download files
+    this.download = (cmd,uuid)=>{
+        let fullurl = 'data/' + uuid
+        return this.get(fullurl)
+    }
+
+    // select gene
+    this.getGene = (caseid,geneid)=>{
+        if (Array.isArray(caseid)) {
+            
+        }
+        return false;
     }
 }
 
