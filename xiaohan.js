@@ -1,6 +1,13 @@
 console.log('xiaohan.js loaded')
 
-xiaohan = function(cmd) {
+let s = document.createElement('script')
+s.src='xiaohan_es6.js'
+document.head.appendChild(s)
+
+
+
+function xiaohan(cmd) {
+    this.version = "0.1";
     this.url = 'https://api.gdc.cancer.gov';
 
     // endpoint: status
@@ -145,6 +152,30 @@ xiaohan = function(cmd) {
 
     }
 
+    this.calSum = function(arr) {
+        var map = new Map();
+
+        // calculate sum of the appearance time of key
+        for (var e in arr) {
+            if (map.get(arr[e]) !== undefined) {
+              map.set(arr[e], map.get(arr[e])+1);
+            } else {
+              map.set(arr[e], 1);
+            }
+        }
+        // output = [{name1, value1}, {name2, value2}, ...]
+        let output = [], item;
+
+        for (var key of map.keys()) {
+        item = {};
+        item['name'] = key;
+        item['value'] = map.get(key);
+        output.push(item);
+        }
+
+        return output;
+    }
+
     if (cmd) {
         return this.cmd;
     } else {
@@ -153,17 +184,21 @@ xiaohan = function(cmd) {
 }
 
 
+// method 1: ES5 commonJS
 define (function(){
+    xiaohan = new xiaohan;
     var exports = {};
-    exports.method = xiaohan;
+    exports.version = xiaohan.version;
+    exports.url = xiaohan.url;
+    exports.get = xiaohan.get;
+    exports.getProject = xiaohan.getProject;
+    exports.getCase = xiaohan.getCase;
+    exports.getFile = xiaohan.getFile;
+    exports.get_mapping = xiaohan.get_mapping;
+    exports.calSum = xiaohan.calSum;
     return exports;
 })
-// module.exports = {
-//     xiaohan: xiaohan
-// }
 
-// define (function(module, exports){
-//     module.exports = {
-//         xiaohan: xiaohan
-//     }
-// });
+// method2 : ES6 export
+//module.exports = 'xiaohan';
+
