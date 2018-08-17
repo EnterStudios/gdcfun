@@ -84,7 +84,7 @@ ray = function() {
             return {}
         }
         pretty = pretty || 'true'
-        let fullurl = 'cases' + '?filter='
+        let fullurl = 'cases' + '?filters='
         if (typeof (query) == 'string') {
             if (query[0] === '{') {
                 fullurl += encodeURIComponent(query)
@@ -109,7 +109,7 @@ ray = function() {
     }
 
     // get files
-    this.getFiles = (cmd,from,size,sort,pretty) => {
+    this.getFiles = (cmd,from,size,sort,pretty)=>{
         from = from || '0'
         sort = sort || 'project.project_id:asc'
         pretty = pretty || 'true'
@@ -257,18 +257,58 @@ ray = function() {
 
     }
 
+    this.sitesQuery = {
+        "method": "cases",
+        "query": {
+            "op": "and",
+            "content": [{
+                "op": "in",
+                "content": {
+                    "field": "cases.primary_site",
+                    "value": []
+                }
+            }, {
+                "op": "in",
+                "content": {
+                    "field": "cases.project.program.name",
+                    "value": ["TCGA"]
+                }
+            }]
+        },
+        "pretty": true
+    }
+
+    this.fileQuery = {
+        "method": "files",
+        "query": {
+            "op": "and",
+            "content": [{
+                "op": "in",
+                "content": {
+                    "field": "cases.case_id",
+                    "value": []
+                }
+            }]
+        },
+        "pretty": true
+    }
+
     // download files
-    this.download = (cmd,uuid)=>{
+    this.download = (uuid)=>{
         let fullurl = 'data/' + uuid
         return this.get(fullurl)
     }
 
     // select gene
-    this.getGene = (caseid,geneid)=>{
-        if (Array.isArray(caseid)) {
-            
+    this.getGene = (primary_sites,geneid)=>{
+        primary_sites = primary_sites || 'Brain'
+        if (Array.isArray(primary_sites)) {
+            this.sitesQuery['query']['content'][0]['content']['value'] = primary_sites
+        } else {
+            this.sitesQuery['query']['content'][0]['content']['value'] = [primary_sites]
         }
-        return false;
+        result = this.getObj(this.sitesQuery)
+        return result;
     }
 }
 
