@@ -265,7 +265,7 @@ ray = function() {
                 "op": "in",
                 "content": {
                     "field": "cases.primary_site",
-                    "value": []
+                    "value": ['Brains']
                 }
             }, {
                 "op": "in",
@@ -300,15 +300,20 @@ ray = function() {
     }
 
     // select gene
-    this.getGene = (primary_sites,geneid)=>{
+    this.getGene = async(primary_sites,geneid)=>{
         primary_sites = primary_sites || 'Brain'
         if (Array.isArray(primary_sites)) {
             this.sitesQuery['query']['content'][0]['content']['value'] = primary_sites
         } else {
             this.sitesQuery['query']['content'][0]['content']['value'] = [primary_sites]
         }
-        result = this.getObj(this.sitesQuery)
-        return result;
+        caseArray = []
+        result = await this.getObj(this.sitesQuery)
+        debugger
+        for (var i = 0; i < result['data']['pagination']['count']; ++i) {
+            caseArray.concat(result['data']['hits'][i]['case_id'])
+        }
+        return caseArray;
     }
 }
 
